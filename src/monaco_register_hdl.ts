@@ -1,5 +1,28 @@
 import * as monaco from "monaco-editor";
 import {language} from './hdl_lang';
+import { object_entries } from "./utils";
+
+
+export const welcome_text = `
+/**
+ // Created by Leonard Pauli, mar 2020
+ // datasys (KTH course EP1200)
+ // see datasys.now.sh and nand2tetris.org
+
+
+ Welcome to this primitive HDL (Hardware Descriptive Language) editor!
+
+ Some example chips are included, try writing "example"
+  + hitting enter in the bottom of this file.
+
+*/
+
+// Under here!
+
+
+
+
+`
 
 
 export const example_chip_3_port_subscripting = `
@@ -40,6 +63,39 @@ CHIP answer_checker {
   MagicLogic(out=correct);
 }`
 
+
+const example_chip_1 = `
+CHIP example_chip_1 { // imagine the chip as a "black box" with inputs and outputs
+IN my_a, my_b; // two signals goes in
+OUT my_output; // in this case, one signal goes out (but you could list multiple if you wanted to)
+
+PARTS:
+// connect my_a to the port called "a" on a chip called "Nand", etc
+// Also create an internal cable/connection called "my_nanded_output",
+//  such that we may connect the two internal chips (Nand and Not) together
+Nand(a=my_a, b=my_b, out=my_nanded_output);
+// lastly, connect the internal Not chip's output to the "outside" / our output
+Not(in=my_nanded_output, out=my_output);
+}
+`
+
+const example_chip_2_nand_wrapper = `
+// The nand chip is our fundamental building block
+// In hardware, it's created using transistors, look it up :)
+CHIP my_nand {
+IN a, b;
+OUT out;
+
+PARTS:
+// Possibly a bit silly, the only thing we've accomplished
+// is creating hiding the real Nand chip in another one with
+// our name ("my_nand")
+// We pass all signals that come to us (a, b) to the real Nand,
+// and then send the result out.
+Nand(a=a, b=b, out=out);
+}
+`
+
 export const lang_id = 'hdl'
 monaco.languages.register({ id: lang_id });
 monaco.languages.setMonarchTokensProvider(lang_id, language)
@@ -66,48 +122,45 @@ monaco.languages.registerCompletionItemProvider(lang_id, {
       documentation: 'Custom chip definition',
       range: null as monaco.IRange,
     }, {
-      label: 'example_chip_1',
-      kind: monaco.languages.CompletionItemKind.Text,
-      insertText:
-`CHIP example_chip_1 { // imagine the chip as a "black box" with inputs and outputs
-  IN my_a, my_b; // two signals goes in
-  OUT my_output; // in this case, one signal goes out (but you could list multiple if you wanted to)
-
-  PARTS:
-  // connect my_a to the port called "a" on a chip called "Nand", etc
-  // Also create an internal cable/connection called "my_nanded_output",
-  //  such that we may connect the two internal chips (Nand and Not) together
-  Nand(a=my_a, b=my_b, out=my_nanded_output);
-  // lastly, connect the internal Not chip's output to the "outside" / our output
-  Not(in=my_nanded_output, out=my_output);
-}`,
+      label: 'nand',
+      kind: monaco.languages.CompletionItemKind.Snippet,
+      insertText: 'Nand(a=${1:a}, b=${2:a}, out=${3:out});',
+      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      documentation: 'Nand, "not and":\n00 -> 1\n01 -> 1\n10 -> 1\n11 -> 0',
       range: null as monaco.IRange,
     }, {
-      label: 'example_chip_2_nand_wrapper',
-      kind: monaco.languages.CompletionItemKind.Text,
-      insertText:
-`
-// The nand chip is our fundamental building block
-// In hardware, it's created using transistors, look it up :)
-CHIP my_nand {
-  IN a, b;
-  OUT out;
-
-  PARTS:
-  // Possibly a bit silly, the only thing we've accomplished
-  // is creating hiding the real Nand chip in another one with
-  // our name ("my_nand")
-  // We pass all signals that come to us (a, b) to the real Nand,
-  // and then send the result out.
-  Nand(a=a, b=b, out=out);
-}`,
+      label: 'part',
+      kind: monaco.languages.CompletionItemKind.Snippet,
+      insertText: '${1:Part}(${2:in}=${3:my_in}, ${4:out}=${5:my_out});',
+      insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      documentation: 'Use a part',
       range: null as monaco.IRange,
     }, {
-      label: 'example_chip_3_port_subscripting',
-      kind: monaco.languages.CompletionItemKind.Text,
-      insertText: example_chip_3_port_subscripting,
+      label: '0to9',
+      kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: Array(10).fill(null).map((_, i)=> `\${1:before}${i}\${2:after}`).join('\n'),
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      documentation: 'Enumerate the numbers',
       range: null as monaco.IRange,
-    }]
+		}, {
+      label: '0to15',
+      kind: monaco.languages.CompletionItemKind.Snippet,
+			insertText: Array(16).fill(null).map((_, i)=> `\${1:before}${i}\${2:after}`).join('\n'),
+			insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+      documentation: 'Enumerate the numbers',
+      range: null as monaco.IRange,
+		}, ...object_entries({
+			welcome_text,
+			example_chip_3_port_subscripting,
+			example_chip_1,
+			example_chip_2_nand_wrapper,
+		}).map(([k, v])=> ({
+      label: k,
+      kind: monaco.languages.CompletionItemKind.Text,
+      insertText: v,
+      range: null as monaco.IRange,
+		})),
+		]
     return {suggestions}
   }
 })

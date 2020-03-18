@@ -12,6 +12,7 @@ import {hdl_tokenize} from './hdl_tokenize'
 import {hdl_astify} from './hdl_astify'
 import {
   example_chip_3_port_subscripting,
+  welcome_text,
   lang_id,
   theme_id,
 } from './monaco_register_hdl'
@@ -78,28 +79,6 @@ document.body.appendChild(app_el)
 
 
 
-
-
-const welcome_text = `
-/**
- // Created by Leonard Pauli, mar 2020
- // datasys (KTH course EP1200)
- // see datasys.now.sh and nand2tetris.org
-
-
- Welcome to this primitive HDL (Hardware Descriptive Language) editor!
-
- Some example chips are included, try writing "example"
-  + hitting enter in the bottom of this file.
-
-*/
-
-// Under here!
-
-
-
-
-`
 
 
 const editor = monaco.editor.create(editor_el, {
