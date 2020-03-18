@@ -24,6 +24,29 @@ body {
 .header {
   height: 50px;
   background-color: #222;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  padding-right: 30px;
+  box-sizing: border-box;
+}
+
+.header button.toggle {
+  border: 0px;
+  padding: 6px 8px;
+  background: hsl(0,0%,8%);
+  color: white;
+  font-weight: bold;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+  margin-right: 10px;
+  outline: none !important;
+}
+.header button.toggle:hover {
+  opacity: 1;
+}
+.header button.toggle[data-on="true"]:after {
+  content: ": yes"
 }
 
 .main-content {
@@ -34,9 +57,13 @@ body {
 
 .editor-container {
   flex: 1;
-  width:50%;
   position: relative;
   overflow: hidden;
+  display: none;
+}
+
+.editor-container.show {
+  display: block;
 }
 
 .editor {
@@ -46,7 +73,19 @@ body {
 
 .result-view {
   flex: 1;
-  width:50%;
   background: #444;
   overflow: scroll;
+  display: none;
+}
+
+.result-view.show {
+  display: block;
+}
+
+
+.result-view svg .node > polygon:first-of-type {
+  fill: rgb(250,250,250);
+}
+.result-view svg .node:hover > polygon:first-of-type {
+	stroke: hsl(202, 100%, 48%);
 }
