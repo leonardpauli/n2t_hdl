@@ -1,0 +1,52 @@
+* {
+  padding: 0px;
+  margin: 0px;
+}
+
+html, body {
+  background: black;
+  color: white;
+}
+
+body {
+  position: absolute;
+  top: 0px; bottom: 0px; left: 0px; right: 0px;
+  overflow: hidden;
+}
+
+.app {
+  position: absolute;
+  top: 0px; bottom: 0px; left: 0px; right: 0px;
+  display: flex;
+  flex-flow: column;
+}
+
+.header {
+  height: 50px;
+  background-color: #222;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+.editor-container {
+  flex: 1;
+  width:50%;
+  position: relative;
+  overflow: hidden;
+}
+
+.editor {
+  position: absolute;
+  top: 0px; left: 0px; right: 0px; bottom: 0px;
+}
+
+.result-view {
+  flex: 1;
+  width:50%;
+  background: #444;
+  overflow: scroll;
+}
